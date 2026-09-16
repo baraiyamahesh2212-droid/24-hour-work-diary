@@ -30,10 +30,10 @@ jobs:
         with:
           gradle-version: '8.7'
 
-      - name: Enable AndroidX
+      - name: Fix Kotlin dependency conflict
         run: |
-          echo "android.useAndroidX=true" >> project/24HourWorkDiary_Android/gradle.properties
-          echo "android.enableJetifier=true" >> project/24HourWorkDiary_Android/gradle.properties
+          cd project/24HourWorkDiary_Android
+          printf '\nconfigurations.all {\n    resolutionStrategy.eachDependency { details ->\n        if (details.requested.group == "org.jetbrains.kotlin") {\n            details.useVersion "1.8.22"\n        }\n    }\n}\n' >> app/build.gradle
 
       - name: Build APK
         run: |
