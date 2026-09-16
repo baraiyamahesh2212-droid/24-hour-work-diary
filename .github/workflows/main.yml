@@ -19,26 +19,24 @@ jobs:
           mkdir -p project
           unzip -q 24_Hour_Work_Diary_Android_Project.zip -d project
 
-      - name: Find project folder
-        run: |
-          echo "Searching for Gradle project..."
-          find project -name gradlew -type f
-
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
       - name: Build APK
         run: |
-          GRADLEW=$(find project -name gradlew -type f | head -n 1)
-          chmod +x "$GRADLEW"
-          cd "$(dirname "$GRADLEW")"
-          ./gradlew assembleDebug
+          cd project/24HourWorkDiary_Android
+          gradle assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: 24-Hour-Work-Diary-APK
-          path: project/**/build/outputs/apk/debug/*.apk
+          path: project/24HourWorkDiary_Android/app/build/outputs/apk/debug/*.apk
