@@ -30,15 +30,18 @@ jobs:
         with:
           gradle-version: '8.7'
 
-      - name: Fix Kotlin dependency conflict
+      - name: Enable AndroidX
         run: |
           cd project/24HourWorkDiary_Android
-          printf '\nconfigurations.all {\n    resolutionStrategy.eachDependency { details ->\n        if (details.requested.group == "org.jetbrains.kotlin") {\n            details.useVersion "1.8.22"\n        }\n    }\n}\n' >> app/build.gradle
+          touch gradle.properties
+          echo "android.useAndroidX=true" >> gradle.properties
+          echo "android.enableJetifier=true" >> gradle.properties
+          echo "org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8" >> gradle.properties
 
       - name: Build APK
         run: |
           cd project/24HourWorkDiary_Android
-          gradle assembleDebug
+          gradle assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
